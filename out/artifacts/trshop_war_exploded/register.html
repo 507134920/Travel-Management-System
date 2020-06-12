@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>注册</title>
+		<link rel="stylesheet" type="text/css" href="css/common.css">
+		<link rel="stylesheet" href="css/register.css">
+		<!--导入jquery-->
+		<script type="text/javascript" src="js/jquery-3.3.1.js"></script>
+
+		<script>
+			function cheackForm() {
+				//var username = $("#username").val();
+				//alert(username);
+				//校验通过,发送ajax请求，提交表单的数据   username=zhangsan&password=123
+				var params={
+					"username":$("#username").val(),
+					"password":$("#password").val(),
+					"email":$("#email").val(),
+					"name":$("#name").val(),
+					"birthday":$("#birthday").val()
+				};
+				//alert(params);
+				console.log(params);
+				var url="regist";
+				$.post(url,params,function(result){
+					//处理服务器响应的数据  data  {flag:true,errorMsg:"注册失败"}
+					//alert(result.state);
+					if(result.state==1){
+						//注册成功，跳转成功页面
+						//alert("恭喜，注册成功！请登录您的注册邮箱进行激活您的账号，激活后才能登录使用。");
+						location.href="register_ok.html";
+					}else{
+						//注册失败,给errorMsg添加提示信息
+						$("#errorMsg").html(result.message);
+					}
+				});
+			}
+
+		</script>
+
+    </head>
+
+	<body>
+	<!--引入头部-->
+	<div id="header"></div>
+        <!-- 头部 end -->
+    	<div class="rg_layout">
+    		<div class="rg_form clearfix">
+
+				<div class="rg_form_left">
+    				<p>新用户注册</p>
+    				<p>USER REGISTER</p>
+    			</div>
+    			<div class="rg_form_center">
+					<div id="errorMsg" style="color:red; text-align: center"></div>
+					<!--注册表单-->
+    				<form method="post">
+						<!--提交处理请求的标识符-->
+						<input type="hidden" name="action" value="register">
+    					<table style="margin-top: 25px;">
+    						<tr>
+    							<td class="td_left">
+    								<label for="username">用户名</label>
+    							</td>
+    							<td class="td_right">
+    								<input type="text" id="username" name="username" placeholder="请输入账号">
+    							</td>
+    						</tr>
+    						<tr>
+    							<td class="td_left">
+    								<label for="password">密码</label>
+    							</td>
+    							<td class="td_right">
+    								<input type="text" id="password" name="password" placeholder="请输入密码">
+    							</td>
+    						</tr>
+    						<tr>
+    							<td class="td_left">
+    								<label for="email">Email</label>
+    							</td>
+    							<td class="td_right">
+    								<input type="text" id="email" name="email" placeholder="请输入Email">
+    							</td>
+    						</tr>
+    						<tr>
+    							<td class="td_left">
+    								<label for="name">姓名</label>
+    							</td>
+    							<td class="td_right">
+    								<input type="text" id="name" name="name" placeholder="请输入真实姓名">
+    							</td>
+    						</tr>
+    						<tr>
+    							<td class="td_left">
+    								<label for="birthday">出生日期</label>
+    							</td>
+    							<td class="td_right">
+    								<input type="date" id="birthday" name="birthday" placeholder="年/月/日">
+    							</td>
+    						</tr>
+    						<tr>
+    							<td class="td_left">
+    							</td>
+    							<td class="td_right check">
+									<input type="button" value="注册" onclick="cheackForm()"/>
+									<span id="msg" style="color: red;"></span>
+    							</td>
+    						</tr>
+    					</table>
+    				</form>
+    			</div>
+    			<div class="rg_form_right">
+    				<p>
+    					已有账号？
+    					<a href="logining.html">立即登录</a>
+    				</p>
+    			</div>
+    		</div>
+    	</div>
+        <!--引入尾部-->
+    	<div id="footer"></div>
+		<!--导入布局js，共享header和footer-->
+		<script type="text/javascript" src="js/include.js"></script>
+    	
+    </body>
+</html>

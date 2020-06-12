@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lj.trshop.dao.ShowDao">
+    <!--查询收藏量top4-->
+    <select id="findColection" resultType="map">
+        select p.name,p.quantity,p.price,p.exText,r.count,r.bigPic,r.smallPic,r.rimage
+        from tms_products p,tab_route r
+        where r.productId=p.id and p.states='1'
+        order by count desc
+        limit 0,4
+    </select>
+
+    <!--查询订单量top4-->
+    <select id="findOrderList" resultType="map">
+        select p.name,p.quantity,p.price,p.exText,r.count,r.bigPic,r.smallPic,r.rimage
+        from tms_products p,tab_route r
+        where r.productId=p.id and p.states='1'
+        and r.productId in (select productId from tab_order group by productId order by count(productId) desc) limit 0,4
+    </select>
+
+    <sql id="whereParam1">
+        <where>
+            pr.id = t.projectId and t.id= p.teamId and r.productId=p.id and p.states='1' and pr.name="中国游"
+            <if test='startState!=null and startState!=""'>
+                and r.startState like concat("%",#{startState},"%")
+            </if>
+            <if test='endState!=null and endState!=""'>
+                and r.endState like concat("%",#{endState},"%")
+            </if>
+        </where>
+    </sql>
+    <sql id="whereParam2">
+        <where>
+            pr.id = t.projectId and t.id= p.teamId and r.productId=p.id and p.states='1' and pr.name!="中国游"
+            <if test='startState!=null and startState!=""'>
+                and r.startState like concat("%",#{startState},"%")
+            </if>
+            <if test='endState!=null and endState!=""'>
+                and r.endState like concat("%",#{endState},"%")
+            </if>
+        </where>
+    </sql>
+    <!--查询国内游-->
+    <select id="findChinaPage" resultType="map">
+        select r.startState,r.endState,p.name,p.quantity,p.price,p.exText,r.count,r.bigPic,r.smallPic,r.rimage
+        from tms_projects pr,tms_teams t,tms_products p,tab_route r
+        <include refid="whereParam1"></include>
+        limit 0,6
+    </select>
+
+    <!--查询国外游-->
+    <select id="findOutsidePage" resultType="map">
+        select r.startState,r.endState,p.name,p.quantity,p.price,p.exText,r.count,r.bigPic,r.smallPic,r.rimage
+        from tms_projects pr,tms_teams t,tms_products p,tab_route r
+        <include refid="whereParam2"></include>
+        limit 0,6
+    </select>
+</mapper>

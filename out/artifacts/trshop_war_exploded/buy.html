@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>购买页</title>
+    <link rel="stylesheet" type="text/css" href="css/common.css">
+    <link rel="stylesheet" type="text/css" href="css/ranking-list.css">
+
+</head>
+<body>
+<!--引入头部-->
+<div id="header"></div>
+<!-- 详情 start -->
+<div class="wrap">
+    <div class="prosum_box">
+        <!--填充旅游购买信息-->
+    </div>
+</div>
+<!-- 购买 end -->
+<script src="js/jquery-3.3.1.js"></script>
+<script src="js/bootstrap.min.js"></script>
+
+<script>
+    $(function () {
+        //页面加载完成执行数据的获取操作
+        dobuy();
+    });
+
+    function dobuy() {
+        var search = location.search;
+        // 切割字符串，拿到第二个值
+        var rid = search.split("=")[1];
+        //alert(rid);
+        var url="doBuyOrder";
+        var params={"rid":rid};
+        $.getJSON(url,params,function (result) {
+            //console.log(result);
+            if(result.state==1){
+                //将数据显示在table的tbody中
+                setTableBodyRows(result.data.list);
+            }
+        });
+        var url1="doFindNum";
+        $.getJSON(url1,params,function (result) {
+            console.log(result);
+            if(result.state==1){
+                var nums=result.data;
+                $("#num").text(nums);
+            }
+        });
+    }
+
+    function setTableBodyRows(result) {
+        //debugger
+        //迭代数据集result
+        //console.log(result);
+        $("#smallPic").attr('src',result[0].smallPic);
+        $("#startState").text(result[0].startState);
+        $("#endState").text(result[0].endState);
+        $("#price").html(result[0].price);
+    }
+
+    function add(){
+        var txt=document.getElementById("txt");
+        var a=txt.value;
+        var num =  $("#num").text();
+        //alert(num);
+        if(a<num){
+            a++;
+        }else{
+            alert("名额不足");
+        }
+        txt.value=a;
+    }
+    function sub() {
+        var txt = document.getElementById("txt");
+        var a = txt.value;
+        if (a > 1) {
+            a--;
+            txt.value = a;
+        } else {
+            txt.value = 1;
+        }
+    }
+
+    function buy() {
+        //从表单中获取购买量和单价 作为参数
+        var num = document.getElementById("txt").value;//购买数量
+        var price=$("#price").html();
+        console.log("购买数量为："+num+"单价为:"+price);
+        //将参数（购买数量、总金额、购买用户、产品id）传递 进行购买 操作完成后库存要减去购买量
+        var m =$("#span_username").html();
+        //alert("用户为："+m);
+        var name =m.split("，")[1];//购买用户
+        if(name){
+            //url解码
+            name = window.decodeURIComponent(name);
+        }
+        //console.log(m);
+        //console.log(name);
+        var money = num*price;//总金额
+        console.log("购买数量为："+num+"总价为:"+money);
+        var search = location.search;
+        // 切割字符串，拿到第二个值
+        var rid = search.split("=")[1];
+        var url="insertOrder";
+        var params={"rid":rid,"num":num,"money":money,"name":name};
+        $.getJSON(url,params,function (result) {
+            console.log("订单结果"+result);
+            if(result.state==1){
+                alert("订单读入成功,请前往购物车内进行支付");
+            }else if(result.state==0) {
+                alert(result.message);
+            }
+        });
+    }
+</script>
+<form>
+    <table  width="700px" height="500px" align="center" id="order">
+        <tr>
+            <td colspan="2" rowspan="3" >
+                <img src="" id="smallPic"style="width: 400px;height: 300px" align="center">
+            </td>
+            <td colspan="2" rowspan="3">
+                <!--表格的嵌套-->
+                <table width="100%" height="100%">
+                    <tr>
+                        <td>起点：</td>
+                        <td id="startState">
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>终点：</td>
+                        <td id="endState">
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>价格：</td>
+                        <td id="price">
+
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+
+        </tr>
+        <tr>
+
+        </tr>
+        <tr>
+            <td colspan="1" align="center">购买数量</td>
+            <td>
+                <input type="button" onclick="sub()" value="-">
+                <input type="text" id="txt" value="1"/>
+                <input type="button" onclick="add()" value="+">
+                旅游团剩余名额
+            </td>
+            <td id="num">
+
+            </td>
+            <td colspan="2" align="center">
+                <input type="button" value="加入购物车" onclick="buy()">
+            </td>
+        </tr>
+
+    </table>
+</form>
+
+
+
+<!--引入底部--->
+<div id="footer"></div>
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="js/jquery-3.3.1.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="js/bootstrap.min.js"></script>
+<!--导入布局js，共享header和footer-->
+<script type="text/javascript" src="js/include.js"></script>
+<script src="js/page.js"></script>
+<script src="js/getParameter.js"></script>
+</body>
+</html>

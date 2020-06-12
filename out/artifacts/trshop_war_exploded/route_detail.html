@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>路线详情</title>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/common.css">
+    <link rel="stylesheet" type="text/css" href="css/route-detail.css">
+</head>
+
+<body>
+<!--引入头部-->
+<div id="header"></div>
+    <!-- 详情 start -->   
+    <div class="wrap">
+        <div class="bread_box">
+            <a href="/">首页</a>
+            <span> &gt;</span>
+            <a href="#" id="tname">国内游</a><span> &gt;</span>
+            <a href="#" id="name">全国-曼谷6-7天自由行 泰国出境旅游 特价往返机票自由行二次确认</a>
+        </div>
+        <div class="prosum_box">
+            <!--填充旅游详细信息-->
+        </div>
+        <div class="pageNum">
+            <ul id="pageId">
+                <li><a class="first">首页</a></li>
+                <li><a class="pre">上一页</a>&nbsp;</li>
+                <li><a class="next">下一页</a></li>
+                <li><a class="last">尾页</a></li>
+                <li><a class="pageCount">总页数(1)</a></li>
+                <li><a class="pageCurrent">当前页(1)</a></li>
+            </ul>
+        </div>
+        <div class="you_need_konw">
+            <span>旅游须知</span>
+            <div class="notice">
+                <p>1、旅行社已投保旅行社责任险。建议游客购买旅游意外保险 <br>
+
+                <p>2、旅游者参加打猎、潜水、海边游泳、漂流、滑水、滑雪、滑草、蹦极、跳伞、滑翔、乘热气球、骑马、赛车、攀岩、水疗、水上飞机等属于高风险性游乐项目的，敬请旅游者务必在参加前充分了解项目的安全须知并确保身体状况能适应此类活动；如旅游者不具备较好的身体条件及技能，可能会造成身体伤害。</p>
+
+                <p>3、参加出海活动时，请务必穿着救生设备。参加水上活动应注意自己的身体状况，有心脏病、冠心病、高血压、感冒、发烧和饮酒及餐后不可以参加水上活动及潜水。在海里活动时，严禁触摸海洋中各种鱼类，水母，海胆，珊瑚等海洋生物，避免被其蛰伤。老人和小孩必须有成年人陪同才能参加合适的水上活动。在海边游玩时，注意保管好随身携带的贵重物品。</p>
+
+                <p>4、根据中国海关总署的规定，旅客在境外购买的物品，在进入中国海关时可能需要征收关税。详细内容见《中华人民共和国海关总署公告2010年第54号文件》。</p>
+
+                <p>5、建议出发时行李托运，贵重物品、常用物品、常用药品、御寒衣物等请随身携带，尽量不要托运。行李延误属于不可抗力因素，我司将全力协助客人跟进后续工作，但我司对此不承担任何责任。</p>
+            </div>
+        </div>
+    </div>
+    <!-- 详情 end -->
+<script src="js/jquery-3.3.1.js"></script>
+<script src="js/bootstrap.min.js"></script>
+
+
+
+    <!--引入底部--->
+    <div id="footer"></div>
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="js/jquery-3.3.1.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+    <!--导入布局js，共享header和footer-->
+    <script type="text/javascript" src="js/include.js"></script>
+    <script src="js/page.js"></script>
+    <script src="js/getParameter.js"></script>
+
+</body>
+<script>
+
+    $(function () {
+        //页面加载完成执行数据的获取操作
+        doGetObjects();
+    });
+
+    function doGetObjects(){
+        var url="findPageObjects";
+        //获取name
+        var name = getParameter("name");
+        if(name){
+            //url解码
+            name = window.decodeURIComponent(name);
+        }
+        //alert(name);
+        //根据pageId绑定的值 动态确定当前页
+        var pageCurrent=$("#pageId").data("pageCurrent");
+        if(!pageCurrent)pageCurrent=1;
+        var params={"pageCurrent":pageCurrent};
+        params.name=name;
+        //alert(params);
+        $.getJSON(url,params,function (result) {
+            console.log(result);
+            if(result.state==1){
+                //将数据显示在table的tbody中
+                setTableBodyRows(result.data.list);
+                //设置分页信息
+                setPagination(result.data.pageObject);
+            }else{
+                alert(result.message);
+            }
+        });
+
+    }
+    //将数据填充到route的ul中
+    function setTableBodyRows(result) {
+
+        $("#tname").html(result[0].tname);
+        $("#name").html(result[0].name);
+        var route_lis = "";
+        //2、迭代数据集result
+        for (var i = 0; i < result.length; i++) {
+            var li = '<li>\n' +
+                '                    <dl class="prosum_left"><!--此处填充图片-->\n' +
+                '                        <dt><!--大图片-->\n' +
+                '                            <img alt="" class="big_img" src="'+result[i].bigPic+'">\n' +
+                '                        </dt>\n' +
+                '                        <dd><!--小图片-->\n' +
+                '                            <a class="up_img up_img_disable"></a><!--上键翻滚-->\n' +
+                '                            <a title="" class="little_img" data-bigpic="#">\n' +
+                '                                <img src="'+result[i].smallPic+'">\n' +
+                '                            </a>\n' +
+                '                            <a class="down_img down_img_disable" style="margin-bottom: 0;"></a><!--下键翻滚-->\n' +
+                '                        </dd>\n' +
+                '                    </dl>\n' +
+                '                    <div class="prosum_right" ><!--此处填充产品详细信息-->\n' +
+                '                        <p class="pros_title">【尾单特卖】'+result[i].tname+'</p>\n' +
+                '                        <p class="hot"><span>'+result[i].name+'</span>1-2月出发，爆款位置有限，抢完即止！</p>\n' +
+                '                        <div class="pros_other">\n' +
+                '                            <p>起点  :  <span>'+result[i].startState+'</span></p>\n' +
+                '                            <p>终点  :  <span>'+result[i].endState+'</span></p>\n' +
+                '                        </div>\n' +
+                '                        <div class="pros_price" id="'+result[i].rid+'">\n' +
+                '                            <p class="price"><strong>¥'+result[i].price+'</strong><span>起</span></p>\n' +
+                '                            <p class="collect" id="favorite">\n' +
+                '                                <a class="btn" id="btn-favorite" onclick="doFindFavorite(this)"><i class="glyphicon glyphicon-heart-empty"></i>点击收藏</a>\n' +
+                '                                <a class="btn" id="btn-buy"><a href="buy.html?id='+result[i].rid+'">点击查看</a></a>\n' +
+                '                                <span>已收藏'+result[i].count+'次</span>\n' +
+                '                            </p>\n' +
+                '                        </div>\n' +
+                '                     </div>\n' +
+                '          </li>';
+            route_lis += li;
+        }
+        $(".prosum_box").html(route_lis);
+        //定位到页面顶部
+        window.scrollTo(0,0);
+    }
+
+    function doFindFavorite(obj) {
+        debugger
+        var m =$("#span_username").html();
+        var name =m.split("，")[1];//购买用户
+        if(name){
+            //url解码
+            name = window.decodeURIComponent(name);
+        }
+        console.log("用户名为值为："+name);//线路id
+        var rid =$(obj).parent().parent().attr("id");
+        console.log("线路rid值为："+rid);//线路id
+        var url="isFavorite";
+        var params={"rid":rid,"name":name};
+        $.getJSON(url,params,function (result) {
+            if(result.state==0){
+                alert(result.message);
+            }else {
+                var rid1 = result.data;
+                var url="addCount";
+                var params={"rid":rid1};
+                $.getJSON(url,params,function (results) {
+                    console.log(results);
+                    if (results.state==1){
+                        alert(results.message);
+                        doGetObjects();
+                    }
+                });
+            }
+        });
+    }
+
+</script>
+</html>

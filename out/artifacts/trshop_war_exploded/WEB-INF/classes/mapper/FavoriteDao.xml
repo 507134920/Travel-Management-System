@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lj.trshop.dao.FavoriteDao">
+
+    <!--判断登录用户是否收藏-->
+    <select id="findByRidAndUid" resultType="com.lj.trshop.entity.Favorite">
+        select * from tab_favorite where rid=#{rid} and uid=(select uid from tab_user where name=#{name})
+    </select>
+    <!--为登录用户新增收藏-->
+    <insert id="insertFavorite">
+        insert into tab_favorite(rid,date,uid)
+        values(#{rid},now(),(select uid from tab_user where name=#{name}))
+    </insert>
+
+    <!--用户显示收藏的产品信息-->
+    <select id="findFavorite" parameterType="String" resultType="map">
+        select r.*,p.name from tab_route r,tms_products p
+        where r.rid in (select rid from tab_favorite where uid =
+        (select uid from tab_user where name=#{name})) and p.id = r.productId
+    </select>
+    <!--取消收藏-->
+    <delete id="deleteFavorite" parameterType="Integer">
+        delete from tab_favorite where rid=#{rid}
+    </delete>
+    <!--修改收藏量-->
+    <update id="updateAddCount" parameterType="Integer">
+        update tab_route set count=count+1 where rid=#{rid}
+    </update>
+    <update id="updateCount" parameterType="Integer">
+        update tab_route set count=count-1 where rid=#{rid}
+    </update>
+</mapper>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>旅游门户系统</title>
+    <script type="text/javascript" src="js/jquery-1.11.0.min.js"></script>
+    <style>
+        *all{
+            margin: 0;
+            padding: 0;
+        }
+        div.inner,table{
+            position:absolute;
+        }
+        body{
+            background-image:url(images/login-backage.jpg);
+            background-size:100%;
+        }
+        .outer{
+            height: 100%;
+        }
+        .inner{
+            border: 5px solid rgba(255,255,255,1);
+            border-radius: 20px;
+            width: 370px;
+            height: 340px;
+            top: 40%;
+            left: 76%;
+            transform: translate(-50%,-50%);
+            box-shadow:11px 11px 11px rgba(50,50,50,1);	//边框阴影
+        }
+        .table{
+            top: 7%;
+            left: 12%;
+        //border: solid;
+            width: 260px;
+            height: 190px;
+            border-spacing:7px;
+        }
+        .under{
+            position: fixed;
+            left: 0px;
+            bottom: 30px;
+            width: 100%;
+            text-align:center;
+            font-size: 15px;
+        }
+        .Time{
+            top: 65%;
+            left: 62%;
+            position: fixed;
+            width: 400px;
+            text-align:right;
+        }
+        .TEXT{
+            height:72%;
+            width: 200px;
+        }
+        a {text-decoration: none}
+    </style>
+    <script>
+        function check() {
+            debugger
+            var username = $("#username").val();
+            var password = $("#password").val();
+            //alert(username+""+password);
+            if (username == null || username == "" || password == null || password == ""){
+                $("#message").text("账户密码不能为空!");
+                return false;
+            }else {
+                return true;
+            }
+        }
+    </script>
+</head>
+<body>
+<div class="outer">
+    <div class="inner">
+        <form method="post" action="login"
+              onsubmit="return check()">
+            <table class="table">
+                <caption> <h1>旅游门户系统</h1> </caption>
+                <!--提示信息-->
+                <font color="red">
+                    <span id="message">${msg}</span>
+                </font>
+                <tr height="30px">
+                    <td><big><b>账&nbsp;&nbsp;号</b></big></td>
+                    <td><input type="text" name="username" id="username"class="TEXT"/> </td>
+                </tr>
+                <tr height="30px">
+                    <td><big><b>密&nbsp;&nbsp;码</b></big></td>
+                    <td><input class="TEXT"type="password" name="password" id="password"/> </td>
+                </tr>
+                <tr height="30px">
+                    <td colspan="2" align="right">
+                        <input class="TEXT"type='submit'  value="            登陆系统              "/>
+                    </td>
+                </tr>
+                <tr height="20px"><td colspan="2" style="text-align:right;font-size:small"><a href = "toIndex">返回主页面</a> | <a href = "toRegister">前往注册</a> | <a href = "jihuo.html">前往激活</a></td></tr>
+            </table>
+        </form>
+
+    </div>
+</div>
+</body>
+</html>

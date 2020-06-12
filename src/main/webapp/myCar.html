@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>HN旅游网-我的购物车</title>
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="css/common.css">
+        <link rel="stylesheet" href="css/index.css">
+        <style>
+           .tab-content .row>div {
+            margin-top: 16px;
+           } 
+           .tab-content {
+            margin-bottom: 36px;
+           }
+       </style>
+        <script src="js/jquery-3.3.1.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script>
+            $(document).ready(function(){
+                $(".table").on("click",".btn-buy,.btn-alipay,.btn-delete",doLoadEditPage);
+            });
+
+            function find() {
+                var m =$("#span_username").html();
+                var name =m.split("，")[1];//购买用户
+                if(name){
+                    //url解码
+                    name = window.decodeURIComponent(name);
+                }
+                var url="findCar";
+                var params={"name":name};
+                //console.log(params);
+                $.getJSON(url,params,function (result) {
+                    console.log(result);
+                    if(result.state==1){
+                        setTableBodyRows(result.data.list);
+                    }else{
+                        alert(result.message);
+                    }
+                });
+            }
+            //将数据填充到table的body中
+            function setTableBodyRows(result) {
+                debugger
+                //1、获得tbody对象
+                var tBody = $("#tbodyId");
+                tBody.empty();
+                //2、迭代数据集result
+                for(var i in result){
+                    //2.1、构建一个tr对象
+                    var tr = $("<tr></tr>");
+                    //2.1.1、绑定id 为修改操作提供id
+                    tr.data("id",result[i].id);
+                    //2.2、构建每行td对象
+                    //2.3、在td对象内填充具体数据
+                    var tds = "<td><input type='checkbox' name='checkId' value=' "+result[i].id+" '></td>"+
+                        "<td>"+result[i].code+"</td>"+
+                        "<td>"+result[i].startState+"</td>"+
+                        "<td>"+result[i].endState+"</td>"+
+                        "<td>"+result[i].num+"</td>"+
+                        "<td>"+result[i].money+"</td>"+
+                        "<td><input type='button' class='btn btn-default btn-buy'id='btn-buy' value='支付'/>" +
+                        "<input type='button' class='btn btn-default btn-alipay' id='btn-alipay' value='阿里支付'/>"+
+                        "<input type='button' class='btn btn-default btn-delete' id='btn-delete' value='取消支付'/></td>";
+                    //2.4、将td添加到tr中
+                    tr.append(tds);
+                    //2.5、将tr追加到tbody中
+                    tBody.append(tr);
+                }
+            }
+
+            function doLoadEditPage() {
+                debugger
+                //alert("开始支付")
+                //1、获得选中的checkbox的id值
+                var id=$(this).parent().parent().data("id");
+                //console.log("id="+id);//控制台输出
+                if ($(this).hasClass("btn-alipay")){
+                    location.href="goAlipay?id="+id;
+                }
+                if($(this).hasClass("btn-buy")){
+                    var url="buyOrder";
+                    var params={"id":id};
+                    $.getJSON(url,params,function (result) {
+                        console.log(result);
+                        if(result.state==1){
+                            alert(result.message);
+                            find();
+                        }else{
+                            alert(result.message);
+                            find();
+                        }
+                    });
+
+                }
+                if($(this).hasClass("btn-delete")){
+                    var url="dleteCar";
+                    var params={"id":id};
+                    //console.log(params);
+                    $.getJSON(url,params,function (result) {
+                        console.log(result);
+                        if(result.state==1){
+                            alert(result.message);
+                            find();
+                        }else{
+                            alert(result.message);
+                            find();
+                        }
+                    });
+                }
+            }
+        </script>
+    </head>
+    <body>
+    <!--引入头部-->
+    <div id="header"></div>
+         <!-- 排行榜 start-->
+        <section id="content">            
+            <section class="hemai_jx">
+                <div class="jx_top">
+                    <div class="jx_tit">
+                        <img src="images/icon_5.jpg" alt="">
+                        <span onclick="find()">点击查看</span>
+                    </div>                    
+                </div>
+                <div class="jx_content">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>选择 </th>
+                            <th>订单编号</th>
+                            <th>起点</th>
+                            <th>终点</th>
+                            <th>购买数量</th>
+                            <th>总金额</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <!-- ajax异步获得,并将数据填充到tbody中 -->
+                        <tbody id="tbodyId">
+
+                        </tbody>
+                    </table>
+                </div>
+            </section>                      
+        </section>
+        <!-- 排行榜 end-->
+    	
+         <!--引入尾部-->
+    	<div id="footer"></div>
+        <!--导入布局js，共享header和footer-->
+        <script type="text/javascript" src="js/include.js"></script>
+    </body>
+</html>

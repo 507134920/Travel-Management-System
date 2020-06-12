@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lj.trshop.dao.ClassesDao">
+    <select id="findAll" resultType="map">
+        select * from tms_classes
+    </select>
+
+
+    <select id="findObjects" resultType="map">
+        select p.name,p.quantity,p.price,p.exText,r.count,r.bigPic,r.smallPic,r.rimage
+        from tms_products p,tab_route r
+        where r.productId=p.id and p.states='1'
+        and p.classId=#{id}
+        limit #{startIndex},#{pageSize}
+    </select>
+    <select id="getRowCount" parameterType="Integer" resultType="java.lang.Integer">
+        select count(*) from tms_products p where p.states='1'and p.classId=#{id}
+    </select>
+
+    <select id="findPageObjects" resultType="map">
+        select p.name,t.name as tname,r.startState,r.endState,r.bigPic,r.smallPic,r.count,r.rid,p.price
+        from tms_products p,tms_teams t,tab_route r
+        where p.id=r.productId and p.teamId=t.id
+        and p.name=#{name}
+    </select>
+    <select id="getPageRowCount" parameterType="String" resultType="java.lang.Integer">
+        select count(*) from tms_products p,tab_route r
+        where p.id=r.productId and p.name=#{name}
+    </select>
+</mapper>

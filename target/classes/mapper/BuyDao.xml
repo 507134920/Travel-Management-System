@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lj.trshop.dao.BuyDao">
+    <select id="buyOrder" parameterType="Integer" resultType="map">
+        select p.price,r.endState,r.startState,r.smallPic
+        from tms_products p,tab_route r
+        where r.productId=p.id and r.rid=#{rid};
+    </select>
+
+    <!--根据rid查询已支付订单的某一产品的数量-->
+    <select id="findNum1" parameterType="Integer" resultType="int">
+        select COALESCE(sum(num),0) as numbers from tab_order
+        where states=1 and productId in(select productId from tab_route where rid=#{rid})
+    </select>
+    <!--根据rid查询某一产品的总数量-->
+    <select id="findNum2" parameterType="Integer" resultType="int">
+        select quantity from tms_products where id in(select productId from tab_route where rid=#{rid})
+    </select>
+
+    <!--新增订单-->
+    <insert id="insertOrder">
+        insert into tab_order(code,productId,num,money,states,createTime,uid,rid)
+        values(now(),(select productId from tab_route where rid=#{rid}),#{num},#{money},0,now(),
+        (select uid from tab_user where name=#{name}),#{rid});
+    </insert>
+    <!--购物车,显示未支付订单-->
+    <select id="findCar" parameterType="String" resultType="map">
+        select o.productId,o.uid,o.id,o.code,o.num,o.money,r.startState,r.endState from tab_order o,tab_route r
+        where o.states=0 and o.productId=r.productId and o.rid=r.rid
+        and o.uid=(select uid from tab_user where name=#{name})
+    </select>
+
+    <!--支付成功后修改订单状态-->
+    <update id="updateStates" parameterType="Integer">
+        update tab_order set states=1 where id=#{id}
+    </update>
+    <!--支付成功后修改库存-->
+    <update id="updateNum" parameterType="Integer">
+         update tms_products
+         set soldQty=soldQty+(select num from tab_order where id=#{id})
+         where id=(select productId from tab_order where id=#{id})
+    </update>
+    <!--用户取消未支付订单-->
+    <delete id="dleteCar">
+        delete from tab_order where id = #{id}
+    </delete>
+    
+    <!--阿里支付-->
+    <select id="getOrderById" parameterType="Integer" resultType="com.lj.trshop.entity.Order">
+         select * from tab_order where id=#{id}
+    </select>
+    <select id="getRouteById" parameterType="Integer" resultType="com.lj.trshop.entity.Route">
+        select * from tab_route where rid=(select rid from tab_order where id=#{id});
+    </select>
+    <update id="updateStatesBycode" parameterType="String">
+        update tab_order set states=1 where code=#{code}
+    </update>
+</mapper>
